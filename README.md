@@ -54,6 +54,25 @@ exports.handler = wrap(async (event, context) => {
 });
 ```
 
+### Middy
+
+We also support [Middy](https://middy.js.org) The lambda middleware framework.
+
+```javascript
+import { logger, Baselime } from "@baselime/lambda-logger";
+import middy from "@middy/core";
+
+exports.handler = middy()
+	.use(Baselime())
+	.handler(function (e, context) {
+		const requests = e.Records.map((el) =>
+			Buffer.from(el.kinesis.data, "base64").toString("utf-8"),
+		);
+		logger.info("The events to stream", requests);
+	});
+```
+
+
 ### Contributing
 
 If you would like to contribute to the development of this library, please submit a pull request on GitHub. Before submitting a pull request, please ensure that you have run the tests and that they pass.

@@ -119,7 +119,7 @@ function wrap(func) {
 	return instrumentedLambda;
 }
 
-function baselimeMiddyMiddleware() {
+function MiddyMiddleware() {
 	return {
 		before: ({ event }) => {
 			log("baselime", "baselime:trigger", {
@@ -137,5 +137,5 @@ function baselimeMiddyMiddleware() {
 module.exports = {
 	wrap,
 	logger,
-	baselimeMiddyMiddleware,
+	Baselime: MiddyMiddleware,
 };
