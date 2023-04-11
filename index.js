@@ -37,7 +37,7 @@ const { traceId, parentTraceId } = getLambdaTraceId();
  * @param {string} message
  * @param {Record<string, any>?} data
  */
-function info(message, data = null) {
+function info(message, data) {
 	const level = "info";
 	if (!isLogged(level)) return;
 	const logMsg = {
@@ -51,7 +51,12 @@ function info(message, data = null) {
 	console.log(JSON.stringify(logMsg));
 }
 
-function debug(message, data = null) {
+/**
+ *
+ * @param {string} message
+ * @param {Record<string, any>?} data
+ */
+function debug(message, data) {
 	const level = "debug";
 	if (!isLogged(level)) return;
 	const logMsg = {
