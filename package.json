@@ -1,0 +1,23 @@
+{
+  "name": "@baselime/lambda-logger",
+  "version": "0.0.1",
+  "description": "An opinionated logger for AWS Lambda",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baselime/lambda-logger.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/baselime/lambda-logger/issues"
+  },
+  "homepage": "https://github.com/baselime/lambda-logger#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.114",
+    "@types/node": "^18.15.11"
+  }
+}
