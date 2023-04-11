@@ -109,12 +109,12 @@ function wrap(func) {
 	 */
 	const instrumentedLambda = async (event, context) => {
 		try {
-			log("baselime", "Lambda Invoke Event", {
+			log("baselime", "baselime:trigger", {
 				event,
 				requestId: context.awsRequestId,
 			});
 			const response = await func(event, context);
-			log("baselime", "Lambda Response Event", {
+			log("baselime", "baselime:return", {
 				response,
 				requestId: context.awsRequestId,
 			});
