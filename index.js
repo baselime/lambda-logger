@@ -5,7 +5,7 @@ const DEFAULT_CONTEXT = {
 	functionMemorySize: process.env.AWS_LAMBDA_FUNCTION_MEMORY_SIZE,
 };
 
-const getLambdaTraceId = () => {
+function getLambdaTraceId() {
 	const XRAY_ENV_NAME = "_X_AMZN_TRACE_ID";
 	const TRACE_ID_REGEX = /^Root=(.+);Parent=(.+);/;
 	const tracingInfo = process.env[XRAY_ENV_NAME] || "";
@@ -15,7 +15,7 @@ const getLambdaTraceId = () => {
 		traceId: matches[1],
 		parentTraceId: matches[2],
 	};
-};
+}
 
 const LOG_LEVEL = process.env.LOG_LEVEL || "INFO";
 
@@ -24,11 +24,11 @@ const LOG_LEVEL = process.env.LOG_LEVEL || "INFO";
  * @param {string} level
  * @returns
  */
-const isLogged = (level) => {
+function isLogged(level) {
 	const levels = ["DEBUG", "INFO", "WARN", "ERROR"];
 
 	return levels.indexOf(level.toUpperCase()) >= levels.indexOf(LOG_LEVEL);
-};
+}
 
 const { traceId, parentTraceId } = getLambdaTraceId();
 
@@ -37,7 +37,7 @@ const { traceId, parentTraceId } = getLambdaTraceId();
  * @param {string} message
  * @param {Record<string, any>?} data
  */
-const info = (message, data = null) => {
+function info(message, data = null) {
 	const level = "info";
 	if (!isLogged(level)) return;
 	const logMsg = {
@@ -49,9 +49,9 @@ const info = (message, data = null) => {
 		level,
 	};
 	console.log(JSON.stringify(logMsg));
-};
+}
 
-const debug = (message, data = null) => {
+function debug(message, data = null) {
 	const level = "debug";
 	if (!isLogged(level)) return;
 	const logMsg = {
@@ -63,7 +63,7 @@ const debug = (message, data = null) => {
 		level,
 	};
 	console.log(JSON.stringify(logMsg));
-};
+}
 
 /**
  *
@@ -71,7 +71,7 @@ const debug = (message, data = null) => {
  * @param {Error | undefined} err
  * @returns
  */
-const getErrorData = (data, err) => {
+function getErrorData(data, err) {
 	if (!err) {
 		return data;
 	}
@@ -82,7 +82,7 @@ const getErrorData = (data, err) => {
 		errorMessage: err.message,
 		stackTrace: err.stack,
 	};
-};
+}
 
 /**
  * @param {string} message
@@ -90,21 +90,22 @@ const getErrorData = (data, err) => {
  * @param {Error | undefined} error
  * @returns
  */
-const warn = (message, dataOrError, error) => {
+function warn(message, dataOrError, error) {
 	const level = "warn";
-    const data = !error && dataOrError instanceof Error
-    ? getErrorData({}, dataOrError)
-    : getErrorData(dataOrError, error);
+	const data =
+		!error && dataOrError instanceof Error
+			? getErrorData({}, dataOrError)
+			: getErrorData(dataOrError, error);
 	const logMsg = {
 		message,
 		...DEFAULT_CONTEXT,
 		traceId,
 		parentTraceId,
-		data,		
+		data,
 		level,
 	};
 	console.warn(JSON.stringify(logMsg));
-};
+}
 
 /**
  * @param {string} message
@@ -112,21 +113,22 @@ const warn = (message, dataOrError, error) => {
  * @param {Error | undefined} error
  * @returns
  */
-const error = (message, dataOrError, error) => {
+function error(message, dataOrError, error) {
 	const level = "error";
-    const data = !error && dataOrError instanceof Error
-    ? getErrorData({}, dataOrError)
-    : getErrorData(dataOrError, error);
+	const data =
+		!error && dataOrError instanceof Error
+			? getErrorData({}, dataOrError)
+			: getErrorData(dataOrError, error);
 	const logMsg = {
 		message,
 		...DEFAULT_CONTEXT,
 		traceId,
 		parentTraceId,
-		data,		
+		data,
 		level,
 	};
 	console.error(JSON.stringify(logMsg));
-};
+}
 
 const logger = {
 	info,
