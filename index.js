@@ -1,22 +1,3 @@
-const DEFAULT_CONTEXT = {
-	awsRegion: process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION,
-	functionName: process.env.AWS_LAMBDA_FUNCTION_NAME,
-	functionVersion: process.env.AWS_LAMBDA_FUNCTION_VERSION,
-	functionMemorySize: process.env.AWS_LAMBDA_FUNCTION_MEMORY_SIZE,
-};
-
-function getLambdaTraceId() {
-	const XRAY_ENV_NAME = "_X_AMZN_TRACE_ID";
-	const TRACE_ID_REGEX = /^Root=(.+);Parent=(.+);/;
-	const tracingInfo = process.env[XRAY_ENV_NAME] || "";
-	const matches = tracingInfo.match(TRACE_ID_REGEX) || ["", "", ""];
-
-	return {
-		traceId: matches[1],
-		parentTraceId: matches[2],
-	};
-}
-
 const LOG_LEVEL = process.env.LOG_LEVEL || "INFO";
 
 /**
@@ -25,55 +6,18 @@ const LOG_LEVEL = process.env.LOG_LEVEL || "INFO";
  * @returns
  */
 function isLogged(level) {
+	if (level === "baselime") {
+		return true;
+	}
 	const levels = ["DEBUG", "INFO", "WARN", "ERROR"];
 
 	return levels.indexOf(level.toUpperCase()) >= levels.indexOf(LOG_LEVEL);
 }
 
-const { traceId, parentTraceId } = getLambdaTraceId();
-
 /**
  *
- * @param {string} message
- * @param {Record<string, any>?} data
- */
-function info(message, data) {
-	const level = "info";
-	if (!isLogged(level)) return;
-	const logMsg = {
-		message,
-		...DEFAULT_CONTEXT,
-		traceId,
-		parentTraceId,
-		data,
-		level,
-	};
-	console.log(JSON.stringify(logMsg));
-}
-
-/**
- *
- * @param {string} message
- * @param {Record<string, any>?} data
- */
-function debug(message, data) {
-	const level = "debug";
-	if (!isLogged(level)) return;
-	const logMsg = {
-		message,
-		...DEFAULT_CONTEXT,
-		traceId,
-		parentTraceId,
-		data,
-		level,
-	};
-	console.log(JSON.stringify(logMsg));
-}
-
-/**
- *
- * @param {Record<string, any> | undefined} data
- * @param {Error | undefined} err
+ * @param {Record<string, any> | null} data
+ * @param {Error?} err
  * @returns
  */
 function getErrorData(data, err) {
@@ -89,50 +33,60 @@ function getErrorData(data, err) {
 	};
 }
 
-/**
- * @param {string} message
- * @param {Record<string, any>| Error | undefined} dataOrError
- * @param {Error | undefined} error
- * @returns
- */
-function warn(message, dataOrError, error) {
-	const level = "warn";
-	const data =
-		!error && dataOrError instanceof Error
-			? getErrorData({}, dataOrError)
-			: getErrorData(dataOrError, error);
+function log(level, message, data) {
+	if (!isLogged(level)) return;
 	const logMsg = {
 		message,
-		...DEFAULT_CONTEXT,
-		traceId,
-		parentTraceId,
 		data,
 		level,
 	};
-	console.warn(JSON.stringify(logMsg));
+	console.log(JSON.stringify(logMsg));
+}
+
+/**
+ *
+ * @param {string} message
+ * @param {Record<string, any>?} data
+ */
+function info(message, data) {
+	log("info", message, data);
+}
+
+/**
+ *
+ * @param {string} message
+ * @param {Record<string, any>?} data
+ */
+function debug(message, data) {
+	log("debug", message, data);
 }
 
 /**
  * @param {string} message
- * @param {Record<string, any>| Error | undefined} dataOrError
- * @param {Error | undefined} error
+ * @param {Record<string, any>| Error | null} dataOrError
+ * @param {Error?} error
  * @returns
  */
-function error(message, dataOrError, error) {
-	const level = "error";
+function warn(message, dataOrError, error) {
 	const data =
 		!error && dataOrError instanceof Error
 			? getErrorData({}, dataOrError)
 			: getErrorData(dataOrError, error);
-	const logMsg = {
-		message,
-		...DEFAULT_CONTEXT,
-		traceId,
-		parentTraceId,
-		data,
-		level,
-	};
-	console.error(JSON.stringify(logMsg));
+	log("warn", message, data);
+}
+
+/**
+ * @param {string} message
+ * @param {Record<string, any>| Error | null} dataOrError
+ * @param {Error?} error
+ * @returns
+ */
+function error(message, dataOrError, error) {
+	const data =
+		!error && dataOrError instanceof Error
+			? getErrorData({}, dataOrError)
+			: getErrorData(dataOrError, error);
+	log("error", message, data);
 }
 
 const logger = {
@@ -155,9 +109,12 @@ function wrap(func) {
 	 */
 	const instrumentedLambda = async (event, context) => {
 		try {
-			info("Lambda Invoke Event", { event, requestId: context.awsRequestId });
+			log("baselime", "Lambda Invoke Event", {
+				event,
+				requestId: context.awsRequestId,
+			});
 			const response = await func(event, context);
-			info("Lambda Response Event", {
+			log("baselime", "Lambda Response Event", {
 				response,
 				requestId: context.awsRequestId,
 			});
