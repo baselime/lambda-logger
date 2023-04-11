@@ -102,21 +102,14 @@ const logger = {
  * @returns
  */
 function wrap(func) {
-	/**
-	 *
-	 * @param {*} event
-	 * @param {import("aws-lambda").Context} context
-	 */
-	const instrumentedLambda = async (event, context) => {
+	const instrumentedLambda = async (event, context, callback) => {
 		try {
 			log("baselime", "baselime:trigger", {
 				event,
-				requestId: context.awsRequestId,
 			});
-			const response = await func(event, context);
-			log("baselime", "baselime:return", {
+			const response = await func(event, context, callback);
+			log("baselime", "baselime:response", {
 				response,
-				requestId: context.awsRequestId,
 			});
 			return response;
 		} catch (err) {
@@ -126,7 +119,23 @@ function wrap(func) {
 	return instrumentedLambda;
 }
 
+function baselimeMiddyMiddleware() {
+	return {
+		before: ({ event }) => {
+			log("baselime", "baselime:trigger", {
+				event,
+			});
+		},
+		after: ({ response }) => {
+			log("baselime", "baselime:response", {
+				response,
+			});
+		},
+	};
+}
+
 module.exports = {
 	wrap,
 	logger,
+	baselimeMiddyMiddleware,
 };
