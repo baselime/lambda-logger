@@ -16,8 +16,8 @@ function isLogged(level) {
 
 /**
  *
- * @param {Record<string, any> | null} data
- * @param {Error?} err
+ * @param {Record<string, any>=} data
+ * @param {Error=} err
  * @returns
  */
 function getErrorData(data, err) {
@@ -46,7 +46,7 @@ function log(level, message, data) {
 /**
  *
  * @param {string} message
- * @param {Record<string, any>?} data
+ * @param {Record<string, any>=} data
  */
 function info(message, data) {
 	log("info", message, data);
@@ -55,7 +55,7 @@ function info(message, data) {
 /**
  *
  * @param {string} message
- * @param {Record<string, any>?} data
+ * @param {Record<string, any>=} data
  */
 function debug(message, data) {
 	log("debug", message, data);
@@ -63,8 +63,8 @@ function debug(message, data) {
 
 /**
  * @param {string} message
- * @param {Record<string, any>| Error | null} dataOrError
- * @param {Error?} error
+ * @param {Record<string, any>| Error=} dataOrError
+ * @param {Error=} error
  * @returns
  */
 function warn(message, dataOrError, error) {
@@ -77,8 +77,8 @@ function warn(message, dataOrError, error) {
 
 /**
  * @param {string} message
- * @param {Record<string, any>| Error | null} dataOrError
- * @param {Error?} error
+ * @param {Record<string, any>| Error=} dataOrError
+ * @param {Error=} error
  * @returns
  */
 function error(message, dataOrError, error) {
