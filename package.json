@@ -1,6 +1,6 @@
 {
   "name": "@baselime/lambda-logger",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An opinionated logger for AWS Lambda",
   "main": "index.js",
   "scripts": {
