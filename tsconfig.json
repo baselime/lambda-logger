@@ -3,6 +3,7 @@
     "include": ["./index.js"],
     "compilerOptions": {
       // Generate d.ts files
+      "allowJs": true,
       "declaration": true,
       // This compiler run should
       // only output d.ts files

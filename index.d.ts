@@ -21,28 +21,28 @@ declare function MiddyMiddleware(): {
 /**
  *
  * @param {string} message
- * @param {Record<string, any>?} data
+ * @param {Record<string, any>=} data
  */
-declare function info(message: string, data: Record<string, any> | null): void;
+declare function info(message: string, data?: Record<string, any> | undefined): void;
 /**
  *
  * @param {string} message
- * @param {Record<string, any>?} data
+ * @param {Record<string, any>=} data
  */
-declare function debug(message: string, data: Record<string, any> | null): void;
+declare function debug(message: string, data?: Record<string, any> | undefined): void;
 /**
  * @param {string} message
- * @param {Record<string, any>| Error | null} dataOrError
- * @param {Error?} error
+ * @param {Record<string, any>| Error=} dataOrError
+ * @param {Error=} error
  * @returns
  */
-declare function warn(message: string, dataOrError: Record<string, any> | Error | null, error: Error | null): void;
+declare function warn(message: string, dataOrError?: (Record<string, any> | Error) | undefined, error?: Error | undefined): void;
 /**
  * @param {string} message
- * @param {Record<string, any>| Error | null} dataOrError
- * @param {Error?} error
+ * @param {Record<string, any>| Error=} dataOrError
+ * @param {Error=} error
  * @returns
  */
-declare function error(message: string, dataOrError: Record<string, any> | Error | null, error: Error | null): void;
+declare function error(message: string, dataOrError?: (Record<string, any> | Error) | undefined, error?: Error | undefined): void;
 export { MiddyMiddleware as Baselime };
 //# sourceMappingURL=index.d.ts.map
