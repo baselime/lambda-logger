@@ -9,11 +9,25 @@ function isLogged(level) {
 	if (level === "baselime") {
 		return true;
 	}
-	const levels = ["DEBUG", "INFO", "WARN", "ERROR"];
+	const levels = ["DEBUG", "INFas your payload grows. It pairs well with flatstr, which triggers a V8 optimization that improves performance when eventually O", "WARN", "ERROR"];
 
 	return levels.indexOf(level.toUpperCase()) >= levels.indexOf(LOG_LEVEL);
 }
 
+/**
+ * 
+ * @param {*} payload
+ *
+ */
+function checkPayloadSizeSafe(payload) {
+	try {
+		const maxCloudWatchLogSize = 200 * 1024;
+		const payloadString = JSON.stringify(payload);
+		return payloadString > maxCloudWatchLogSize ? false : true;
+	} catch(e) {
+		return false
+	}
+}
 /**
  *
  * @param {Record<string, any>=} data
@@ -27,9 +41,11 @@ function getErrorData(data, err) {
 
 	return {
 		...(data || {}),
-		errorName: err.name,
-		errorMessage: err.message,
-		stackTrace: err.stack,
+		error: {
+			name: err.name,
+			message: err.message,
+			stack: err.stack,
+		},
 	};
 }
 
@@ -104,12 +120,13 @@ const logger = {
 function wrap(func) {
 	const instrumentedLambda = async (event, context, callback) => {
 		try {
+
 			log("baselime", "baselime:trigger", {
-				event,
+				...(checkPayloadSizeSafe(event) ? { event } :  { error: 'Event exceeds 256kb'}),
 			});
 			const response = await func(event, context, callback);
 			log("baselime", "baselime:response", {
-				response,
+				...(checkPayloadSizeSafe(response) ? { response } :  { error: 'Response exceeds 256kb'}),
 			});
 			return response;
 		} catch (err) {
