@@ -1,6 +1,16 @@
 ## AWS Lambda Logging Library for Node.js
 
-This library provides an easy-to-use logging solution for AWS Lambda functions built with Node.js. It provides an object with four logging functions - `info`, `warn`, `debug`, and `error` - which can be used to log messages at different levels of severity. The visibility of the logs can be controlled by setting the `LOG_LEVEL` environment variable. It's an extremely simple library with 0 dependencies that just wraps console.log with some helpful defaults.
+This library provides an easy-to-use logging solution for AWS Lambda functions built with Node.js.
+
+```javascript
+const { logger } = require('@baselime/lambda-logger');
+logger.info('This is an informational message', {
+   operation: 'copy-paste-replace',
+   count: 9000
+});
+```
+
+It provides an object with four logging functions - `info`, `warn`, `debug`, and `error` - which can be used to log messages at different levels of severity. The visibility of the logs can be controlled by setting the `LOG_LEVEL` environment variable. It's an extremely simple library with 0 dependencies that just wraps console.log with some helpful defaults.
 
 ### Installation
 
