@@ -4,6 +4,7 @@ This library provides an easy-to-use logging solution for AWS Lambda functions b
 
 ```javascript
 const { logger } = require('@baselime/lambda-logger');
+
 logger.info('This is an informational message', {
    operation: 'copy-paste-replace',
    count: 9000
