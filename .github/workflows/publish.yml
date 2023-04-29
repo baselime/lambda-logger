@@ -3,8 +3,8 @@ name: build-publish-release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
   publish-node-packages:
