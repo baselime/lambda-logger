@@ -9,7 +9,7 @@ function isLogged(level) {
 	if (level === "baselime") {
 		return true;
 	}
-	const levels = ["DEBUG", "INFas your payload grows. It pairs well with flatstr, which triggers a V8 optimization that improves performance when eventually O", "WARN", "ERROR"];
+	const levels = ["DEBUG", "INFO", "WARN", "ERROR"];
 
 	return levels.indexOf(level.toUpperCase()) >= levels.indexOf(LOG_LEVEL);
 }
