@@ -54,9 +54,18 @@ function log(level, message, data) {
 	const logMsg = {
 		message,
 		data,
-		level,
+		level
 	};
-	console.log(JSON.stringify(logMsg));
+	
+	try {
+		console[level](JSON.stringify(logMsg));
+	} catch(err) {
+		if(err.message.includes("is not a function")) {
+			console.error(`level ${level} is not a function`);
+		}
+		console.error(err);
+	}
+	
 }
 
 /**
@@ -113,28 +122,30 @@ const logger = {
 };
 
 /**
- *
- * @param {(...any) => any} func
- * @returns
+ * @template T
+ * @param {T extends (...any) => any} func
+ * @returns {T}
  */
 function wrap(func) {
 	const instrumentedLambda = async (event, context, callback) => {
 		try {
 
-			log("baselime", "baselime:trigger", {
+			log("info", "baselime:trigger", {
 				...(checkPayloadSizeSafe(event) ? { event } :  { error: 'Event exceeds 256kb'}),
 			});
 			const response = await func(event, context, callback);
-			log("baselime", "baselime:response", {
+			log("info", "baselime:response", {
 				...(checkPayloadSizeSafe(response) ? { response } :  { error: 'Response exceeds 256kb'}),
 			});
 			return response;
 		} catch (err) {
+			log("info", "baselime:error", getErrorData({}, err));
 			throw err;
 		}
 	};
 	return instrumentedLambda;
 }
+
 
 function MiddyMiddleware() {
 	return {
