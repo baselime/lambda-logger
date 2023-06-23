@@ -123,6 +123,18 @@ const logger = {
 
 /**
  * @template T
+ * @param {T} event 
+ * @returns {T}
+ */
+function decodeEventBody(event) {
+	if (event.isBase64Encoded) {
+		return {...event, body: Buffer.from(event.body, 'base64').toString()}
+	}
+	return event;
+}
+
+/**
+ * @template T
  * @param {T extends (...any) => any} func
  * @returns {T}
  */
@@ -131,7 +143,7 @@ function wrap(func) {
 		try {
 
 			log("info", "baselime:trigger", {
-				...(checkPayloadSizeSafe(event) ? { event } :  { error: 'Event exceeds 256kb'}),
+				...(checkPayloadSizeSafe(event) ? { event: decodeEventBody(event) } :  { error: 'Event exceeds 256kb'}),
 			});
 			const response = await func(event, context, callback);
 			log("info", "baselime:response", {
@@ -151,7 +163,7 @@ function MiddyMiddleware() {
 	return {
 		before: ({ event }) => {
 			log("baselime", "baselime:trigger", {
-				event,
+				event: decodeEventBody(event),
 			});
 		},
 		after: ({ response }) => {
