@@ -162,12 +162,12 @@ function wrap(func) {
 function MiddyMiddleware() {
 	return {
 		before: ({ event }) => {
-			log("baselime", "baselime:trigger", {
+			log("info", "baselime:trigger", {
 				event: decodeEventBody(event),
 			});
 		},
 		after: ({ response }) => {
-			log("baselime", "baselime:response", {
+			log("info", "baselime:response", {
 				response,
 			});
 		},
